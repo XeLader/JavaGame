@@ -9,15 +9,14 @@ import java.awt.event.KeyEvent;
 
 // TODO допишите все необходимые сущности для игры
 public class Game extends JPanel implements ActionListener {
-	private final int TILE_SIZE = 20;
-	private final int WIDTH = 20;
-	private final int HEIGHT = 20;
+	private final int WIDTH = 600;
+	private final int HEIGHT = 600;
 	private boolean gameOver = false;
 	private Timer timer;
 
 	public Game() {
-		setPreferredSize(new Dimension(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE));
-		setBackground(Color.BLACK);
+		setPreferredSize(new Dimension(WIDTH , HEIGHT));
+		//setBackground(Color.BLACK);
 		setFocusable(true);
 		addKeyListener(new KeyAdapter() {
 			@Override
@@ -25,14 +24,12 @@ public class Game extends JPanel implements ActionListener {
 				System.out.println("You pressed " + e.getKeyChar() + " key!");
 			}
 		});
-
 		timer = new Timer(100, this);
 		timer.start();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-
 	}
 
 	public void restart() {
@@ -43,4 +40,5 @@ public class Game extends JPanel implements ActionListener {
 	public boolean isGameOver() {
 		return gameOver;
 	}
+
 }

@@ -1,6 +1,7 @@
 package edu.mephi.java;
 
 import edu.mephi.java.engine.Game;
+import edu.mephi.java.engine.GameField;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
@@ -12,6 +13,7 @@ public class Main {
 
 		JFrame frame = new JFrame("Game");
 		Game game = new Game();
+		game.add(new GameField());
 		frame.add(game);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
