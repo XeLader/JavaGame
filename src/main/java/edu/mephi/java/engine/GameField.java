@@ -8,9 +8,9 @@ import java.security.PrivateKey;
 
 
 public class GameField extends JComponent{
-    private final static int BORDER = 20;
+    private final static int BORDER = 20; //border size in px
     private final static int TILE_SIZE = 40;
-    public final static int TILES_X = 8;
+    public final static int TILES_X = 8; //count of
     public final static int TILES_Y = 8;
     private final char[] LETTERS = {'A'};
     private final char[] NUMBERS = {'1'};
@@ -18,6 +18,7 @@ public class GameField extends JComponent{
     private final Color BlackHovered = Color.DARK_GRAY;
     private final Color White = Color.WHITE;
     private final Color WhiteHovered = Color.LIGHT_GRAY;
+    private boolean [][] ways = new boolean[8][8];
 
     public static class Position{
         int x;
@@ -60,7 +61,7 @@ public class GameField extends JComponent{
 
     }
 
-    private Chessman[] chessmen = new Chessman[32];
+    private Chessman[][] chessmen = new Chessman[8][8];
     private Position hoveredSquare = new Position();
 
 
@@ -73,11 +74,10 @@ public class GameField extends JComponent{
         drawSquares(g, widthOfSquare, heightOfSquare);
         drawLetters(g, widthOfSquare);
         drawNumbers(g, heightOfSquare);
-        Font font = g.getFont();
-        g.setFont(new Font("Serif", Font.PLAIN, 30));
-        for (int i = 0; i < 32; i++)
-            chessmen[i].paint(g, BORDER, BORDER, (this.getWidth() - BORDER*2), (this.getHeight() - BORDER*2));
-        g.setFont(font);
+        for (int i = 0; i < 8; i++)
+            for (int j = 0; j < 8; j++)
+                if (chessmen[i][j] != null)
+                    chessmen[i][j].paint(g, BORDER, BORDER, (this.getWidth() - BORDER*2), (this.getHeight() - BORDER*2));
     }
 
 
@@ -103,6 +103,12 @@ public class GameField extends JComponent{
                         g.setColor(White);
                 }
                 g.fillRect(BORDER + (i - 1) * width, BORDER+ (j - 1) * height, width, height);
+
+                if(ways[i-1][j-1])
+                {
+                    g.setColor(Color.BLUE);
+                    g.fillOval(BORDER + (i) * width - width/2, BORDER+ (j) * height - height/2, 10, 10 );
+                }
             }
         g.setColor(Color.BLACK);
     }
@@ -145,12 +151,7 @@ public class GameField extends JComponent{
 
     private Chessman findChessmanOnPosition(Position position)
     {
-        for (int i = 0; i < 32; i++)
-            if (chessmen[i].getPosition().equals(position))
-            {
-                return chessmen[i];
-            }
-        return null;
+        return chessmen[position.getX() - 1][position.getY() - 1];
     }
 
     MouseListener mouseListener = new MouseListener() {
@@ -160,7 +161,10 @@ public class GameField extends JComponent{
             int y = e.getY();
             Chessman chess = findChessmanOnPosition(getClickedSquare(x, y));
             if (chess != null)
+            {
                 chess.Choose();
+                GameSteps.posibleSteps(chessmen, chess.getPosition(), ways);
+            }
         }
 
         @Override

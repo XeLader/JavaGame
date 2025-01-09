@@ -52,29 +52,29 @@ public class Chessman{
         unicodeSymbol[0] = (char)('\u2654' + color.getValue() + type.getValue());
     }
 
-    public static void initializeChessmen(Chessman[] chessmen)
+    public static void initializeChessmen(Chessman[][] chessmen)
     {
         //fill lines 1 and 8 with white and black pieces
         for (int i = 0; i <= 1; i++)
         {
             Chessman.Color color = (i == 0) ? Chessman.Color.WHITE : Chessman.Color.BLACK;
             int y = 1 + i*7;
-            chessmen[i*8] = new Chessman(new GameField.Position( 1, y), color, Chessman.Type.ROOK);
-            chessmen[i*8 + 1] = new Chessman(new GameField.Position(2, y), color, Chessman.Type.KNIGHT);
-            chessmen[i*8 + 2] = new Chessman(new GameField.Position(3, y), color, Chessman.Type.BISHOP);
-            chessmen[i*8 + 3] = new Chessman(new GameField.Position(4, y), color, Chessman.Type.QUEEN);
-            chessmen[i*8 + 4] = new Chessman(new GameField.Position(5, y), color, Chessman.Type.KING);
-            chessmen[i*8 + 5] = new Chessman(new GameField.Position(6, y), color, Chessman.Type.BISHOP);
-            chessmen[i*8 + 6] = new Chessman(new GameField.Position(7, y), color, Chessman.Type.KNIGHT);
-            chessmen[i*8 + 7] = new Chessman(new GameField.Position(8, y), color, Chessman.Type.ROOK);
+            chessmen[0][i*7] = new Chessman(new GameField.Position( 1, y), color, Chessman.Type.ROOK);
+            chessmen[1][i*7] = new Chessman(new GameField.Position(2, y), color, Chessman.Type.KNIGHT);
+            chessmen[2][i*7] = new Chessman(new GameField.Position(3, y), color, Chessman.Type.BISHOP);
+            chessmen[3][i*7] = new Chessman(new GameField.Position(4, y), color, Chessman.Type.QUEEN);
+            chessmen[4][i*7] = new Chessman(new GameField.Position(5, y), color, Chessman.Type.KING);
+            chessmen[5][i*7] = new Chessman(new GameField.Position(6, y), color, Chessman.Type.BISHOP);
+            chessmen[6][i*7] = new Chessman(new GameField.Position(7, y), color, Chessman.Type.KNIGHT);
+            chessmen[7][i*7] = new Chessman(new GameField.Position(8, y), color, Chessman.Type.ROOK);
         }
         //file lines 2 and 7 with black and white pawns
         for (int i = 1; i <=8; i++)
         {
             Chessman.Color white = Chessman.Color.WHITE;
             Chessman.Color black = Chessman.Color.BLACK;
-            chessmen[15 + i] = new Chessman(new GameField.Position(i, 2), white, Chessman.Type.PAWN);
-            chessmen[23 + i] = new Chessman(new GameField.Position(i, 7), black, Chessman.Type.PAWN);
+            chessmen[i - 1][1] = new Chessman(new GameField.Position(i, 2), white, Chessman.Type.PAWN);
+            chessmen[i - 1][6] = new Chessman(new GameField.Position(i, 7), black, Chessman.Type.PAWN);
         }
 
     }
@@ -118,5 +118,13 @@ public class Chessman{
     public boolean isChosen()
     {
         return chosen;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public Color getColor() {
+        return color;
     }
 }
