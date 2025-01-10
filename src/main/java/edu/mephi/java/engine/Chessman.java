@@ -85,7 +85,7 @@ public class Chessman{
         int titleWidth = width / GameField.TILES_X;
         int titleHeight = height / GameField.TILES_Y;
         int realX = originX + titleWidth * position.x - titleWidth * 3 / 4;
-        int realY = originY + titleHeight * position.y - titleHeight / 4;
+        int realY = originY + titleHeight * (9 - position.y) - titleHeight / 4;
 
         java.awt.Color color1 = g.getColor();
         if (chosen)
@@ -120,11 +120,29 @@ public class Chessman{
         return chosen;
     }
 
+    public static void ClearChoice()
+    {
+        if (chosenChess != null)
+        {
+            chosenChess.chosen = false;
+            chosenChess = null;
+        }
+    }
+
+    public void setPosition(GameField.Position position)
+    {
+        this.position = position;
+    }
+
     public Type getType() {
         return type;
     }
 
     public Color getColor() {
         return color;
+    }
+
+    public static Chessman getChosenChess(){
+        return chosenChess;
     }
 }

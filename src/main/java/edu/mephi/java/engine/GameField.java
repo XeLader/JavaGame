@@ -13,7 +13,7 @@ public class GameField extends JComponent{
     public final static int TILES_X = 8; //count of
     public final static int TILES_Y = 8;
     private final char[] LETTERS = {'A'};
-    private final char[] NUMBERS = {'1'};
+    private final char[] NUMBERS = {'8'};
     private final Color Black = Color.GRAY;
     private final Color BlackHovered = Color.DARK_GRAY;
     private final Color White = Color.WHITE;
@@ -88,7 +88,7 @@ public class GameField extends JComponent{
         for (int i = 1; i <= TILES_X; i++)
             for  (int j = 1; j <= TILES_Y; j++)
             {
-                if ((i + j) % 2 == 1)
+                if ((i + j) % 2 == 0)
                 {
                     if (i == hoveredSquare.getX() && j == hoveredSquare.getY())
                         g.setColor(BlackHovered);
@@ -102,12 +102,12 @@ public class GameField extends JComponent{
                     else
                         g.setColor(White);
                 }
-                g.fillRect(BORDER + (i - 1) * width, BORDER+ (j - 1) * height, width, height);
+                g.fillRect(BORDER + (i - 1) * width, BORDER+ (8 - j) * height, width, height);
 
                 if(ways[i-1][j-1])
                 {
                     g.setColor(Color.BLUE);
-                    g.fillOval(BORDER + (i) * width - width/2, BORDER+ (j) * height - height/2, 10, 10 );
+                    g.fillOval(BORDER + (i) * width - width/2, BORDER+ (9 - j) * height - height/2, 10, 10 );
                 }
             }
         g.setColor(Color.BLACK);
@@ -130,9 +130,9 @@ public class GameField extends JComponent{
         for (int j = 0; j < TILES_Y; j++)
         {
             g.drawChars(NUMBERS, 0, 1, BORDER - 15, BORDER+ j * height + height/2);
-            NUMBERS[0]++;
+            NUMBERS[0]--;
         }
-        NUMBERS[0]='1';
+        NUMBERS[0]='8';
     }
 
     private Position getClickedSquare(int x, int y)
@@ -145,7 +145,7 @@ public class GameField extends JComponent{
              int title_size_x = (getWidth() - BORDER*2) / TILES_X;
              int title_size_y = (getHeight() - BORDER*2) / TILES_Y;
              return new Position((x - BORDER) / title_size_x + 1,
-                    (y- BORDER) / title_size_y + 1);
+                    8 - (y- BORDER) / title_size_y);
          }
     }
 
@@ -159,11 +159,21 @@ public class GameField extends JComponent{
         public void mouseClicked(MouseEvent e) {
             int x = e.getX();
             int y = e.getY();
-            Chessman chess = findChessmanOnPosition(getClickedSquare(x, y));
+
+            Position clickPosition = getClickedSquare(x, y);
+            if (GameSteps.nextStep(chessmen, clickPosition, ways))
+                return;
+
+            Chessman chess = findChessmanOnPosition(clickPosition);
             if (chess != null)
             {
                 chess.Choose();
                 GameSteps.posibleSteps(chessmen, chess.getPosition(), ways);
+            }
+            else
+            {
+                Chessman.ClearChoice();
+                GameSteps.ClearWays(ways);
             }
         }
 

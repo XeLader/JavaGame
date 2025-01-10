@@ -6,9 +6,7 @@ public class GameSteps {
     {
         int x = position.getX() - 1;
         int y = position.getY() - 1;
-        for (int i = 0; i < 8; i++)
-            for (int j = 0; j < 8; j++)
-                ways[i][j] = false;
+        ClearWays(ways);
 
         switch (chessmen[x][y].getType())
         {
@@ -49,45 +47,54 @@ public class GameSteps {
             direction = -1;
 
         //check if there is no board or other
-        if (y + direction > 0 && y + direction < 8)
+        if (y + direction >= 0 && y + direction < 8)
+        {
             ways[x][y + direction] = (chessmen[x][y + direction] == null);
-        if (y + direction*2 > 0 && y + direction*2 < 8)
-            ways[x][y + direction] = (chessmen[x][y + direction] == null);
+            if (y + direction*2 >= 0 && y + direction*2 < 8)
+                ways[x][y + direction*2] = (chessmen[x][y + direction*2] == null);
+
+            if(x + 1 < 8)
+                ways[x + 1][y + direction] = checkPawnCaprures(chessmen, x, y, x+1, y+direction);
+
+            if(x - 1 >= 0)
+                ways[x-1][y + direction] = checkPawnCaprures(chessmen, x, y, x-1, y+direction);
+        }
+
 
     }
 
     private static void possibleStepsKNIGHT (Chessman [][]chessmen, int x, int y, boolean [][]ways)
     {
         Chessman.Color thisColor = chessmen[x][y].getColor();
-        if (x - 1 > 0)
+        if (x - 1 >= 0)
         {
-            if (y - 2 > 0)
-                ways[x-1][y-2] = true;
+            if (y - 2 >= 0)
+                ways[x-1][y-2] = checkVacation(chessmen, x, y, x-1, y-2);
             if (y + 2 < 8)
-                ways[x-1][y+2] = true;
+                ways[x-1][y+2] = checkVacation(chessmen, x, y, x-1, y+2);
 
-            if (x - 2 > 0)
+            if (x - 2 >= 0)
             {
-                if (y - 1 > 0)
-                    ways[x-2][y-1] = true;
+                if (y - 1 >= 0)
+                    ways[x-2][y-1] = checkVacation(chessmen, x, y, x-2, y-1);
                 if (y + 1 < 8)
-                    ways[x-2][y+1] = true;
+                    ways[x-2][y+1] = checkVacation(chessmen, x, y, x-2, y+1);
             }
         }
 
         if (x + 1 < 8)
         {
-            if (y - 2 > 0)
-                ways[x+1][y-2] = true;
+            if (y - 2 >= 0)
+                ways[x+1][y-2] = checkVacation(chessmen, x, y, x+1, y-2);;
             if (y + 2 < 8)
-                ways[x+1][y+2] = true;
+                ways[x+1][y+2] = checkVacation(chessmen, x, y, x+1, y+2);;
 
             if (x + 2 < 8)
             {
-                if (y - 1 > 0)
-                    ways[x+2][y-1] = true;
+                if (y - 1 >= 0)
+                    ways[x+2][y-1] = checkVacation(chessmen, x, y, x+1, y-1);
                 if (y + 1 < 8)
-                    ways[x+2][y+1] = true;
+                    ways[x+2][y+1] = checkVacation(chessmen, x, y, x+2, y+1);
             }
         }
     }
@@ -110,75 +117,48 @@ public class GameSteps {
 
     private static void possibleStepsKING(Chessman [][]chessmen, int x, int y, boolean [][]ways)
     {
-        if (x - 1 > 0)
+        if (x - 1 >= 0)
         {
             if (y - 1 > 0)
-                ways[x-1][y-1] = checkVacation(chessmen,x, y, x-1, y-1);
+                isNotStopped(chessmen, ways, x, y, x-1, y-1);
             if (y + 1 < 8)
-                ways[x-1][y+1] = checkVacation(chessmen,x, y, x-1, y+1);
-            ways[x-1][y] = checkVacation(chessmen,x, y, x-1, y);
+                isNotStopped(chessmen, ways, x, y, x-1, y+1);
+            isNotStopped(chessmen, ways, x, y, x-1, y);
         }
 
         if (x + 1 < 8)
         {
             if (y - 1 > 0)
-                ways[x+1][y-1] = checkVacation(chessmen,x, y, x+1, y-1);
+                isNotStopped(chessmen, ways, x, y, x+1, y-1);
             if (y + 1 < 8)
-                ways[x+1][y+1] = checkVacation(chessmen,x, y, x+1, y+1);
-            ways[x+1][y] = checkVacation(chessmen,x, y, x+1, y);
+                isNotStopped(chessmen, ways, x, y, x+1, y+1);
+            isNotStopped(chessmen, ways, x, y, x+1, y);
         }
 
-        if (y -1 > 0)
-            ways[x][y - 1] = checkVacation(chessmen,x, y, x, y-1);
+        if (y -1 >= 0)
+            isNotStopped(chessmen, ways, x, y, x, y-1);
         if (y + 1 < 8)
-            ways[x][y - 1] = checkVacation(chessmen,x, y, x, y-1);
+            isNotStopped(chessmen, ways, x, y, x, y+1);
     }
 
     private static void possibleStepsLINES(Chessman [][]chessmen, int x, int y, boolean [][]ways)
     {
-        int i = 1;
-        while(x + i < 8)
+        for(int d = -1; d <= 1; d += 2)
         {
-            ways[x + i][y] = chessmen[x + i][y] == null;
-            if (chessmen[x + i][y].getColor() != chessmen[x][y].getColor())
+            int i = d;
+            while(y + i >= 0 && y + i < 8)
             {
-                ways[x + i][y] = true;
-                break;
+                if(isNotStopped(chessmen, ways, x, y, x, y+i))
+                    break;
+                i += d;
             }
-            i++;
-        }
-        i = -1;
-        while(x + i > 0)
-        {
-            ways[x + i][y] = chessmen[x + i][y] == null;
-            if (chessmen[x + i][y].getColor() != chessmen[x][y].getColor())
+            i = d;
+            while(x + i >= 0 && x + i < 8)
             {
-                ways[x + i][y] = true;
-                break;
+                if(isNotStopped(chessmen, ways, x, y, x+i, y))
+                    break;
+                i+=d;
             }
-            i--;
-        }
-        i = 1;
-        while(y + i < 8)
-        {
-            ways[x][y + i] = chessmen[x][y + i] == null;
-            if (chessmen[x + i][y].getColor() != chessmen[x][y].getColor())
-            {
-                ways[x + i][y] = true;
-                break;
-            }
-            i++;
-        }
-        i = -1;
-        while(y + i > 0)
-        {
-            ways[x][y + i] = chessmen[x][y + i] == null;
-            if (chessmen[x][y + i].getColor() != chessmen[x][y].getColor())
-            {
-                ways[x][y + i] = true;
-                break;
-            }
-            i--;
         }
     }
 
@@ -186,60 +166,79 @@ public class GameSteps {
 
     private static void possibleStepsDIAGONALLES(Chessman [][]chessmen, int x, int y, boolean [][]ways)
     {
-        int i = 1;
-        while(x + i < 8 && y + i < 8)
+        for(int d = -1; d <= 1; d += 2)
         {
-            if(chessmen[x + i][y + i] == null)
-                ways[x + i][y + i] = true;
-            else if (chessmen[x + i][y + i].getColor() != chessmen[x][y].getColor())
+            int i = d;
+            while(x - i >= 0 && x - i < 8 && y + i >= 0 &&  y + i < 8)
             {
-                ways[x + i][y + i] = true;
-                break;
+                if(isNotStopped(chessmen, ways, x, y, x-i, y+i))
+                    break;
+                i+=d;
             }
-            i++;
-        }
-        i = -1;
-        while(x + i > 0 && y + i > 0)
-        {
-            if(chessmen[x + i][y + i] == null)
-                ways[x + i][y + i] = true;
-            else if (chessmen[x + i][y + i].getColor() != chessmen[x][y].getColor())
+            i = d;
+            while(x + i >= 0 && x + i < 8  && y + i >= 0 && y + i < 8)
             {
-                ways[x + i][y + i] = true;
-                break;
+                if(isNotStopped(chessmen, ways, x, y, x+i, y+i))
+                    break;
+                i+=d;
             }
-            i--;
-        }
-        i = 1;
-        while(x - i > 0 && y + i < 8)
-        {
-            if(chessmen[x - i][y + i] == null)
-                ways[x - i][y + i] = true;
-            else if (chessmen[x - i][y + i].getColor() != chessmen[x][y].getColor())
-            {
-                ways[x - i][y + i] = true;
-                break;
-            }
-            i++;
-        }
-        i = -1;
-        while(x - i < 8 && y + i > 0)
-        {
-            if(chessmen[x - 1][y + i] == null)
-                ways[x - 1][y + i] = true;
-            else if (chessmen[x - 1][y + i].getColor() != chessmen[x][y].getColor())
-            {
-                ways[x - 1][y + i] = true;
-                break;
-            }
-            i--;
         }
     }
 
     private static boolean checkVacation(Chessman [][]chessmen, int xCur, int yCur, int x, int y)
     {
+        return (chessmen[x][y] == null);
+    }
+
+    private static boolean checkCaptured(Chessman [][]chessmen, int xCur, int yCur, int x, int y)
+    {
+        return chessmen[x][y].getColor() != chessmen[xCur][yCur].getColor();
+    }
+
+    private static boolean isNotStopped(Chessman [][]chessmen, boolean[][] ways, int xCur, int yCur, int x, int y)
+    {
+        if(checkVacation(chessmen, xCur, yCur, x, y))
+        {
+            ways[x][y] = true;
+            return false;
+        }
+        else if (checkCaptured(chessmen, xCur, yCur, x, y))
+            ways[x][y] = true;
+        return true;
+
+    }
+
+    private static boolean checkPawnCaprures(Chessman [][]chessmen, int xCur, int yCur, int x, int y)
+    {
         if(chessmen[x][y] == null)
-            return true;
+            return false;
         else return chessmen[x][y].getColor() != chessmen[xCur][yCur].getColor();
+    }
+
+    public static boolean nextStep(Chessman [][]chessmen, GameField.Position newPosition, boolean [][]way)
+    {
+        if (Chessman.getChosenChess() == null)
+            return false;
+
+        GameField.Position oldPosition = Chessman.getChosenChess().getPosition();
+        int x = newPosition.getX() - 1;
+        int y = newPosition.getY() - 1;
+        if (way[x][y])
+        {
+            chessmen[x][y] = Chessman.getChosenChess();
+            chessmen[x][y].setPosition(newPosition);
+            chessmen[oldPosition.getX() - 1][oldPosition.getY() -1] = null;
+            Chessman.ClearChoice();
+            ClearWays(way);
+            return true;
+        }
+        return false;
+    }
+
+    public static void ClearWays(boolean[][] ways)
+    {
+        for (int i = 0; i < 8; i++)
+            for (int j = 0; j < 8; j++)
+                ways[i][j] = false;
     }
 }
