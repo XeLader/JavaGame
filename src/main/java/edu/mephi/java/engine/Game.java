@@ -12,7 +12,8 @@ public class Game extends JPanel implements ActionListener {
 	private final int WIDTH = 600;
 	private final int HEIGHT = 600;
 	private boolean gameOver = false;
-	private Timer timer;
+	private final GameControl mainControl;
+	private final Timer timer;
 
 	public Game() {
 		setPreferredSize(new Dimension(WIDTH , HEIGHT));
@@ -26,6 +27,8 @@ public class Game extends JPanel implements ActionListener {
 		});
 		timer = new Timer(100, this);
 		timer.start();
+
+		mainControl = new GameControl();
 	}
 
 	@Override
@@ -35,6 +38,10 @@ public class Game extends JPanel implements ActionListener {
 	public void restart() {
 		timer.start();
 		repaint();
+	}
+
+	public GameControl getMainControl() {
+		return mainControl;
 	}
 
 	public boolean isGameOver() {

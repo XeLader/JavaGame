@@ -13,7 +13,8 @@ public class Main {
 
 		JFrame frame = new JFrame("Game");
 		Game game = new Game();
-		game.add(new GameField());
+		game.add(new GameField(game));
+		game.add(game.getMainControl().getInformLabel());
 		frame.add(game);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

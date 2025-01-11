@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.security.PrivateKey;
 
 
 public class GameField extends JComponent{
@@ -18,7 +17,8 @@ public class GameField extends JComponent{
     private final Color BlackHovered = Color.DARK_GRAY;
     private final Color White = Color.WHITE;
     private final Color WhiteHovered = Color.LIGHT_GRAY;
-    private boolean [][] ways = new boolean[8][8];
+    private final boolean [][] ways = new boolean[8][8];
+    private final Game parentGame;
 
     public static class Position{
         int x;
@@ -47,21 +47,17 @@ public class GameField extends JComponent{
             return "x: " + x + " y: " + y;
         }
 
-        public boolean equals(Position position)
-        {
-            return x == position.x && y == position.y;
-        }
     }
 
-    public GameField(){
+    public GameField(Game parentgame){
         setPreferredSize(new Dimension(TILE_SIZE* TILES_X + BORDER*2, TILE_SIZE* TILES_Y + BORDER*2));
         addMouseListener(mouseListener);
         addMouseMotionListener(mouseMotionListener);
         Chessman.initializeChessmen(chessmen);
-
+        parentGame = parentgame;
     }
 
-    private Chessman[][] chessmen = new Chessman[8][8];
+    private final Chessman[][] chessmen = new Chessman[8][8];
     private Position hoveredSquare = new Position();
 
 
@@ -149,10 +145,6 @@ public class GameField extends JComponent{
          }
     }
 
-    private Chessman findChessmanOnPosition(Position position)
-    {
-        return chessmen[position.getX() - 1][position.getY() - 1];
-    }
 
     MouseListener mouseListener = new MouseListener() {
         @Override
@@ -161,20 +153,8 @@ public class GameField extends JComponent{
             int y = e.getY();
 
             Position clickPosition = getClickedSquare(x, y);
-            if (GameSteps.nextStep(chessmen, clickPosition, ways))
-                return;
-
-            Chessman chess = findChessmanOnPosition(clickPosition);
-            if (chess != null)
-            {
-                chess.Choose();
-                GameSteps.posibleSteps(chessmen, chess.getPosition(), ways);
-            }
-            else
-            {
-                Chessman.ClearChoice();
-                GameSteps.ClearWays(ways);
-            }
+            parentGame.getMainControl().stepControl(chessmen, clickPosition, ways);
+            repaint();
         }
 
         @Override

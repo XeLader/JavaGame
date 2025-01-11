@@ -4,9 +4,9 @@ public class GameSteps {
 
     public static void posibleSteps(Chessman [][]chessmen, GameField.Position position, boolean [][]ways)
     {
+        ClearWays(ways);
         int x = position.getX() - 1;
         int y = position.getY() - 1;
-        ClearWays(ways);
 
         switch (chessmen[x][y].getType())
         {
@@ -65,36 +65,35 @@ public class GameSteps {
 
     private static void possibleStepsKNIGHT (Chessman [][]chessmen, int x, int y, boolean [][]ways)
     {
-        Chessman.Color thisColor = chessmen[x][y].getColor();
         if (x - 1 >= 0)
         {
             if (y - 2 >= 0)
-                ways[x-1][y-2] = checkVacation(chessmen, x, y, x-1, y-2);
+                ways[x-1][y-2] = checkVacation(chessmen, x-1, y-2);
             if (y + 2 < 8)
-                ways[x-1][y+2] = checkVacation(chessmen, x, y, x-1, y+2);
+                ways[x-1][y+2] = checkVacation(chessmen, x-1, y+2);
 
             if (x - 2 >= 0)
             {
                 if (y - 1 >= 0)
-                    ways[x-2][y-1] = checkVacation(chessmen, x, y, x-2, y-1);
+                    ways[x-2][y-1] = checkVacation(chessmen, x-2, y-1);
                 if (y + 1 < 8)
-                    ways[x-2][y+1] = checkVacation(chessmen, x, y, x-2, y+1);
+                    ways[x-2][y+1] = checkVacation(chessmen, x-2, y+1);
             }
         }
 
         if (x + 1 < 8)
         {
             if (y - 2 >= 0)
-                ways[x+1][y-2] = checkVacation(chessmen, x, y, x+1, y-2);;
+                ways[x+1][y-2] = checkVacation(chessmen, x+1, y-2);
             if (y + 2 < 8)
-                ways[x+1][y+2] = checkVacation(chessmen, x, y, x+1, y+2);;
+                ways[x+1][y+2] = checkVacation(chessmen, x+1, y+2);
 
             if (x + 2 < 8)
             {
                 if (y - 1 >= 0)
-                    ways[x+2][y-1] = checkVacation(chessmen, x, y, x+1, y-1);
+                    ways[x+2][y-1] = checkVacation(chessmen, x+1, y-1);
                 if (y + 1 < 8)
-                    ways[x+2][y+1] = checkVacation(chessmen, x, y, x+2, y+1);
+                    ways[x+2][y+1] = checkVacation(chessmen, x+2, y+1);
             }
         }
     }
@@ -185,7 +184,7 @@ public class GameSteps {
         }
     }
 
-    private static boolean checkVacation(Chessman [][]chessmen, int xCur, int yCur, int x, int y)
+    private static boolean checkVacation(Chessman [][]chessmen, int x, int y)
     {
         return (chessmen[x][y] == null);
     }
@@ -197,7 +196,7 @@ public class GameSteps {
 
     private static boolean isNotStopped(Chessman [][]chessmen, boolean[][] ways, int xCur, int yCur, int x, int y)
     {
-        if(checkVacation(chessmen, xCur, yCur, x, y))
+        if(checkVacation(chessmen, x, y))
         {
             ways[x][y] = true;
             return false;
